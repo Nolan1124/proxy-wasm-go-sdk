@@ -119,7 +119,13 @@ func (s *state) createHttpContext(contextID uint32, rootContextID uint32) {
 }
 
 func (s *state) registerHttpCallOut(calloutID uint32, callback HttpCalloutCallBack) {
-	r := s.rootContexts[s.contextIDToRootID[s.activeContextID]]
+	var r *rootContextState
+	if rcid, ok := s.contextIDToRootID[s.activeContextID]; ok {
+		r = s.rootContexts[rcid]
+	} else {
+		r = s.rootContexts[s.activeContextID]
+	}
+
 	r.httpCallbacks[calloutID] = &struct {
 		callback        HttpCalloutCallBack
 		callerContextID uint32
